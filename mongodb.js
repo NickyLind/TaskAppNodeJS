@@ -4,9 +4,9 @@ const { MongoClient, ObjectID } = require('mongodb');
 const connectionURL = 'mongodb://127.0.0.1:27017';
 const databaseName = 'task-manager';
 
-const id = new ObjectID()
-console.log(id.id.length);
-console.log(id.toHexString().length);
+// const id = new ObjectID()
+// console.log(id.id.length);
+// console.log(id.toHexString().length);
 
 MongoClient.connect(connectionURL, { useUnifiedTopology: true }, (error, client) => {
   if(error) {
