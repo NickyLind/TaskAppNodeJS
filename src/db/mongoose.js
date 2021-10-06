@@ -11,12 +11,31 @@ const User = mongoose.model('User', {
   }
 });
 
-const me = new User({
-  name: 'Nick',
-  age: 'Bet'
+// const me = new User({
+//   name: 'Nick',
+//   age: 'Bet'
+// });
+
+// me
+//   .save()
+//   .then(() => {console.log(me);})
+//   .catch((error) => {console.log(error);});
+
+const Task = mongoose.model('Task', {
+  description: {
+    type: String
+  },
+  completed: {
+    type: Boolean
+  }
+})
+
+const taskWakeUp = new Task({
+  description: 'Wake up',
+  completed: false
 });
 
-me
+taskWakeUp
   .save()
-  .then(() => {console.log(me);})
+  .then(() => {console.log(taskWakeUp);})
   .catch((error) => {console.log(error);});

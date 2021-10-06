@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "node mongodb.js"
+    "start": "node src/db/mongoose.js"
   },
   "keywords": [],
   "author": "",
