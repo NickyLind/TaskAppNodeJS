@@ -33,7 +33,7 @@ app.get('/users', (req, res) => {
     })
 });
 
-//* Read Specific User
+//* Read Specific User By ID
 app.get('/users/:id', (req, res) => {
   // console.log(req.params);
   const _id = req.params.id
@@ -59,6 +59,32 @@ app.post('/tasks', (req, res) => {
     })
     .catch((e) => {
       res.status(400).send(e)
+    })
+});
+
+//* Read All Tasks
+app.get('/tasks', (req, res) => {
+  Task.find({})
+    .then((tasks) => {
+      res.send(tasks)
+    })
+    .catch((e) => {
+      res.status(500).send()
+    })
+});
+
+//* Read Single Task by ID
+app.get('/tasks/:id', (req, res) => {
+  const _id = req.params.id;
+
+  Task.findById(_id)
+    .then((task) => {
+      if(!task) return res.status(404).send();
+
+      res.send(task);
+    })
+    .catch((e) => {
+      res.status(500).send();
     })
 })
 
