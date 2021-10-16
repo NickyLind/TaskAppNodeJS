@@ -4,13 +4,19 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "node src/db/mongoose.js"
+    "start": "node src/index.js",
+    "dev": "nodemon src/index.js"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "express": "^4.17.1",
     "mongodb": "^3.7.1",
-    "mongoose": "^6.0.9"
+    "mongoose": "^6.0.9",
+    "validator": "^10.9.0"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.13"
   }
 }
