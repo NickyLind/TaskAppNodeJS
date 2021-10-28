@@ -47,6 +47,33 @@ app.get('/users/:id', async (req, res) => {
   }
 });
 
+//* Update User By ID
+app.patch('/users/:id', async (req, res) => {
+  const _id = req.params.id;
+
+  const updates = Object.keys(req.body);
+  const allowedUpdates = ['name', 'email', 'password', 'age'];
+
+  const isValidUpdate = updates.every((update) => {
+    return allowedUpdates.includes(update);
+    //?NOTE for the every array method: if everything is return true, every will return true. If even one thing returns flase, every will return false.
+  });
+
+  if (!isValidUpdate) {
+    return res.status(400).send({ error: 'There Were Invalid Update Properties In The Request.'});
+  }
+  try {
+    const user = await User.findByIdAndUpdate(_id, req.body, { new: true, runValidators: true })
+      //?NOTE we don't need to use the 'set' operator like when we use the MongoDB Driver, because Mongoose handles this for us
+      //?NOTE 3 arugments are passed into the 'findByIdAndUpdate' method. 1) the id, 2) the properties we want to change, & 3) an options object. 
+      //?NOTE in our options object we set 'new: true' so that we recieve the newly updated document back instead of the document befor eapplying the updates and 'runValidators', so all our properties get checked against the validation we set up
+    if(!user) return res.status(404).send();
+    res.send(user);
+  } catch (error) {
+    res.status(400).send(error);
+  }
+});
+
 //* Task Create Endpoint
 app.post('/tasks', async (req, res) => {
   const task = new Task(req.body)
