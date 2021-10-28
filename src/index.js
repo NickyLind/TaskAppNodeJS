@@ -69,6 +69,21 @@ app.patch('/users/:id', async (req, res) => {
   }
 });
 
+//* Delete User By ID
+app.delete('/users/:id', async (req, res) => {
+  const _id = req.params.id;
+
+  try {
+    const user = await User.findByIdAndDelete(_id);
+
+    if(!user) return res.status(404).send({"error": 'User not found.'});
+
+    res.status(200).send(user);
+  } catch (error) {
+    res.status(500).send();
+  }
+});
+
 //* Task Create Endpoint
 app.post('/tasks', async (req, res) => {
   const task = new Task(req.body)
@@ -115,7 +130,7 @@ app.patch('/tasks/:id', async (req, res) => {
   if(!isValidUpdate) {
     return res.status(400).send({error: 'There Were Invalid Update Properties In The Request.'});
   };
-  
+
   try {
     const task = await Task.findByIdAndUpdate(_id, req.body, { new: true, runValidators: true });
 
@@ -123,6 +138,21 @@ app.patch('/tasks/:id', async (req, res) => {
     res.send(task);
   } catch (error) {
     res.status(400).send(error);
+  }
+});
+
+//* Delete Task By ID
+app.delete('/tasks/:id', async (req, res) => {
+  const _id = req.params.id;
+
+  try {
+    const task = await Task.findByIdAndDelete(_id);
+
+    if(!task) return res.status(404).send({ "error": "Task not found"});
+
+    res.status(200).send(task);
+  } catch (error) {
+    res.status(500).send();
   }
 });
 
