@@ -12,6 +12,8 @@ const userSchema = new mongoose.Schema(
     },
     email: {
       type: String,
+      unique: true,
+      //?NOTE 'unique' property means there can only be one email with this name
       required: true,
       trime: true,
       lowercase: true,
@@ -43,19 +45,30 @@ const userSchema = new mongoose.Schema(
     }
   });
 
+userSchema.statics.findByCredentials = async (username, password) => {
+  const user = await User.findOne({ email: username })
+  
+  if(!user) throw new Error('Unable to login. Please check username or password.');
+
+  const isMatch = await bcrypt.compare(password, user.password);
+  
+  if(!isMatch) throw new Error('Unable to login. Please check username or password.')
+
+  return user;
+};
+//?NOTE by setting up out custom method on the statics property of our schema, it allows us to have access to it in our model
+
+//* Hash the plain text password before saving
 userSchema.pre('save',async function(next) {
-  //? we use a standard function declaration so that we have easy access to the 'this' keyword, which in this case is referencing the specific document being created
   const user = this;
 
   if (user.isModified('password')) {
-    //? isModified is a mongoose method thats takes in a field to check if it has been modified
     user.password = await bcrypt.hash(user.password, 8);
   }
 
   next()
-  //? next() is a callback function papssed into middleware so that the middleware knows when to stop executing.
 });
-//?NOTE here we refactor our model so that we use a custom schema instead. With this schema we are able to create some middleware that allows us to check if a user's inputed plain-text password is correct, to validate their login information
+//?NOTE here we refactor our model so that we pass in a custom schema instead of an object. With this schema we are able to create some middleware that allows us to check if a user's inputed plain-text password is correct, to validate their login information
 
 const User = mongoose.model('User', userSchema);
 
