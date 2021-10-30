@@ -15,9 +15,9 @@ const port = process.env.PORT || 3000
 //   }
 // });
 
-app.use((req, res, next) => {
-  res.status(503).send("This service in currently undergoing maitenence. Please try again in a little while");
-});
+// app.use((req, res, next) => {
+//   res.status(503).send("This service in currently undergoing maitenence. Please try again in a little while");
+// });
 
 app.use(express.json());
 app.use(userRouter);

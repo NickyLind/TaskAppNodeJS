@@ -1,5 +1,6 @@
 const express = require('express');
 const router = new express.Router();
+const auth = require('../middleware/auth');
 const User = require('../models/user');
 
 //* User Create Endpoint
@@ -28,14 +29,10 @@ router.post('/users/login', async (req, res) => {
 });
 
 //* Read Multiple Users
-router.get('/users', async (req, res) => {
-
-  try {
-    const users = await User.find({});
-    res.send(users);
-  } catch (error) {
-    res.status(500).send(error)
-  }
+router.get('/users/me', auth, async (req, res) => {
+//?NOTE we pass in our auth middleware as an argument before our routehandler function
+//!NOTE the route handler function won't run unless the middleware calls next() in it's function
+  res.send(req.user);
 });
 
 //* Read Specific User By ID
