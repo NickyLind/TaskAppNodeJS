@@ -52,6 +52,14 @@ const userSchema = new mongoose.Schema(
     }]
   });
 
+//?NOTE the virtual means we're not actually changing what we store for the user document, just setting up a relationship between tasks and users
+userSchema.virtual('tasks', {
+  ref: 'Task',
+  localField: '_id',
+  foreignField: 'author'
+});
+//? locaField is the relationship property on the User side, foreign is the relationship property on the Task side
+
 //* Generate a token for authorization
 //?NOTE methods are available on the intances of the model
 userSchema.methods.generateAuthToken = async function () {
