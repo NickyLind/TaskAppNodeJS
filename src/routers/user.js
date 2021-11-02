@@ -56,30 +56,26 @@ router.post('/users/logoutAll', auth, async (req, res) => {
 
 //* Read Multiple Users
 router.get('/users/me', auth, async (req, res) => {
-//?NOTE we pass in our auth middleware as an argument before our routehandler function
-//!NOTE the route handler function won't run unless the middleware calls next() in it's function
   res.send(req.user);
 });
 
-//* Read Specific User By ID
-router.get('/users/:id', async (req, res) => {
-  const _id = req.params.id
+// //* Read Specific User By ID
+// router.get('/users/:id', async (req, res) => {
+//   const _id = req.params.id
 
-  try {
-    const user = await User.findById(_id);
+//   try {
+//     const user = await User.findById(_id);
 
-    if(!user) return res.status(404).send();
+//     if(!user) return res.status(404).send();
 
-    res.send(user);
-  } catch (error) {
-    res.status(500).send(error)
-  }
-});
+//     res.send(user);
+//   } catch (error) {
+//     res.status(500).send(error)
+//   }
+// });
 
-//* Update User By ID
-router.patch('/users/:id', async (req, res) => {
-  const _id = req.params.id;
-
+//* Update User
+router.patch('/users/me', auth, async (req, res) => {
   const updates = Object.keys(req.body);
   const allowedUpdates = ['name', 'email', 'password', 'age'];
 
@@ -89,13 +85,11 @@ router.patch('/users/:id', async (req, res) => {
     return res.status(400).send({ error: 'There Were Invalid Update Properties In The Request.'});
   }
   try {
-    const user = await User.findById(_id);
-
+    const user = req.user;
     updates.forEach((update) => user[update] = req.body[update]);
 
     await user.save();
 
-    if(!user) return res.status(404).send();
     res.send(user);
   } catch (error) {
     res.status(400).send(error);
@@ -103,15 +97,11 @@ router.patch('/users/:id', async (req, res) => {
 });
 
 //* Delete User By ID
-router.delete('/users/:id', async (req, res) => {
-  const _id = req.params.id;
-
+router.delete('/users/me', auth, async (req, res) => {
   try {
-    const user = await User.findByIdAndDelete(_id);
+    await req.user.remove()
 
-    if(!user) return res.status(404).send({"error": 'User not found.'});
-
-    res.status(200).send(user);
+    res.status(200).send(req.user);
   } catch (error) {
     res.status(500).send();
   }
