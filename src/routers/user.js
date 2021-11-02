@@ -12,11 +12,11 @@ router.post('/users', async (req, res) => {
     const token = await user.generateAuthToken();
     res.status(201).send({ user, token });
   } catch (error) {
-    res.status(400).send(error);
+    res.status(400).send(error.message);
   }
 });
 
-//* User Validation Endpoint
+//* User Validation Endpoint (Login)
 router.post('/users/login', async (req, res) => {
   
   try {
@@ -25,6 +25,32 @@ router.post('/users/login', async (req, res) => {
     res.send({ user, token });
   } catch (error) {
     res.status(400).send({ error: error.message });
+  }
+});
+
+//* User Logout Endpoint
+router.post('/users/logout', auth, async (req, res) => {
+  try {
+    req.user.tokens = req.user.tokens.filter((token) => {
+      return token.token !== req.token;
+    });
+    await req.user.save();
+
+    res.send({'message': 'user logged out successfully'});
+  } catch (error) {
+    res.status(500).send(error.message);
+  }
+});
+
+//* User Logout Of All Sessions
+router.post('/users/logoutAll', auth, async (req, res) => {
+  try {
+    req.user.tokens = [];
+    await req.user.save();
+
+    res.send({'message': 'all devices have been succesfully logged out of'});
+  } catch (error) {
+    res.status(500).send(error.message);
   }
 });
 

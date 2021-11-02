@@ -60,8 +60,19 @@ userSchema.methods.generateAuthToken = async function () {
 
   user.tokens = user.tokens.concat({ token })
   await user.save();
-  
+
   return token;
+};
+
+//* Return acceptable public user data
+userSchema.methods.toJSON = function () {
+  const user = this;
+  const userObject = user.toObject();
+
+  delete userObject.password;
+  delete userObject.tokens;
+
+  return userObject;
 };
 
 //* Find a user by their credentials
