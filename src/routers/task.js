@@ -19,15 +19,24 @@ router.post('/tasks', auth, async (req, res) => {
   }
 });
 
-//* Read All Tasks
+//* Read All Tasks /tasks?completed=true||false
 router.get('/tasks', auth, async (req, res) => {
+  const match = {};
+
+  if (req.query.completed) {
+    match.completed = req.query.completed === 'true';
+    //?NOTE if there is a request query for completed, the completed property of our match object we are passing into our populate method for grabbing tasks will be set to 'true' if the query is true, or 'false' if anything else is specified
+    //TODO let's update this so only true or false or no query will work (expand if else statement to include false and !req.query.completed and the else to send an error saying that only true or false can be used for the completed query)
+  }
 
   try {
-    // const tasks = await Task.find({ author: req.user._id });
-    await req.user.populate('tasks');
+    await req.user.populate({
+      path: 'tasks',
+      match
+    });
     res.send(req.user.tasks);
   } catch (error) {
-    res.status(500).send();
+    res.status(500).send(error.message);
   }
 });
 
