@@ -19,7 +19,8 @@ router.post('/tasks', auth, async (req, res) => {
   }
 });
 
-//* Read All Tasks /tasks?completed=true||false
+//* Read All Tasks
+//* limit / skip === GET /tasks?limit=10&skip=0
 router.get('/tasks', auth, async (req, res) => {
   const match = {};
 
@@ -27,12 +28,18 @@ router.get('/tasks', auth, async (req, res) => {
     match.completed = req.query.completed === 'true';
     //?NOTE if there is a request query for completed, the completed property of our match object we are passing into our populate method for grabbing tasks will be set to 'true' if the query is true, or 'false' if anything else is specified
     //TODO let's update this so only true or false or no query will work (expand if else statement to include false and !req.query.completed and the else to send an error saying that only true or false can be used for the completed query)
+    //! everything about the above query worked except that nothing would return for the /tasks route no matter what i tried.
   }
 
   try {
     await req.user.populate({
       path: 'tasks',
-      match
+      match,
+      options: {
+        limit: parseInt(req.query.limit),
+        //?parse the string given in the query for limit
+        skip: parseInt(req.query.skip)
+      }
     });
     res.send(req.user.tasks);
   } catch (error) {
