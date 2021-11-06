@@ -23,28 +23,36 @@ router.post('/tasks', auth, async (req, res) => {
 //* GET /tasks?sortBy=createdAt:desc
 router.get('/tasks', auth, async (req, res) => {
   const match = {};
+  const completed = req.query.completed;
   const sort = {};
-
-  if (req.query.completed) {
-    match.completed = req.query.completed === 'true';
+  
+  if(completed === 'true') {
+    match.completed = true;
+  } else if (completed === 'false') {
+    match.completed = false;
+  } else if (!completed) {
+    delete match.completed;
+  } else if (completed !== 'false' || completed !== 'true') {
+    res.status(400).send({"Error": "You may only use true or false with the 'completed' query field"})
+    return
   }
-
+  
   if(req.query.sortBy) {
     const parts = req.query.sortBy.split(':');
     sort[parts[0]] = parts[1] === 'desc' ? -1 : 1;
   }
-
+  
   try {
-    await req.user.populate({
-      path: 'tasks',
-      match,
-      options: {
-        limit: parseInt(req.query.limit),
-        skip: parseInt(req.query.skip),
-        sort
-      }
-    });
-    res.send(req.user.tasks);
+      await req.user.populate({
+        path: 'tasks',
+        match,
+        options: {
+          limit: parseInt(req.query.limit),
+          skip: parseInt(req.query.skip),
+          sort
+        }
+      });
+      res.send(req.user.tasks);
   } catch (error) {
     res.status(500).send(error.message);
   }
