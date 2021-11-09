@@ -48,7 +48,10 @@ const userSchema = new mongoose.Schema({
         type: String,
         required: true
       }
-    }]
+    }],
+    avatar: {
+      type: Buffer
+    }
   }, {
     //?NOTE this is an options object we pass into our mongoose schema
     timestamps: true
