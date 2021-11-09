@@ -116,7 +116,7 @@ const upload = multer({
   },
   fileFilter(req, file, cb) {
     if (!file.originalname.match(/\.(jpg|jpeg|png)$/)) {
-      return cb(new Error("Please upload a jpg, jpeg, or png file for avatar use"));
+      return cb(new Error("Please upload an image"));
     }
 
     cb(undefined, true);
@@ -125,6 +125,8 @@ const upload = multer({
 
 router.post('/users/me/avatar', upload.single('avatar'), (req, res) => {
   res.send();
+}, (error, req, res, next) => {
+  res.status(400).send({ error: error.message })
 });
 
 module.exports = router;
